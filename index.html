@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゆっくり風テキスト読み上げ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* ボタンを中央に */
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    textarea {
+      width: 100%;
+      max-width: 400px;
+      height: 120px;
+      background: #2a2a4e;
+      border: 2px solid #00d4ff;
+      border-radius: 10px;
+      padding: 15px;
+      color: #e0e0e0;
+      font-size: 1em;
+      resize: none;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #ff4081;
+      box-shadow: 0 0 20px rgba(255, 64, 129, 0.5);
+    }
+    button {
+      background: linear-gradient(45deg, #00d4ff, #ff4081);
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 1.2em;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 64, 129, 0.6);
+    }
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+    }
+    #loading {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease-out;
+    }
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loading img {
+      max-width: 300px;
+      max-height: 300px;
+      animation: spin 2s linear infinite;
+    }
+    #main-content {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #main-content.visible {
+      opacity: 1;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      }
+      to {
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(255, 64, 129, 0.5);
+      }
+    }
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      textarea {
+        max-width: 90%;
+      }
+      #loading img {
+        max-width: 200px;
+        max-height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <img src="https://cdn.amebaowndme.com/madrid-prd/madrid-web/images/sites/2762588/e7851e8946cadf512f72fbc39b42a2b9_435105c3d90c180a1a4e0ccd0374f175.png?width=800" alt="Loading">
+  </div>
+  <div id="main-content">
+    <h1>ゆっくり風テキスト読み上げ</h1>
+    <textarea id="textInput" placeholder="読み上げるテキストを入力してください"></textarea>
+    <button onclick="speakText()">読み上げ</button>
+  </div>
+
+  <script>
+    // ページ読み込み時にローディングを表示
+    window.onload = () => {
+      const loading = document.getElementById('loading');
+      const mainContent = document.getElementById('main-content');
+      setTimeout(() => {
+        loading.classList.add('hidden');
+        mainContent.classList.add('visible');
+      }, 2000); // 2秒後にローディング非表示
+    };
+
+    function speakText() {
+      const text = document.getElementById('textInput').value;
+      if (text.trim() === '') {
+        alert('テキストを入力してください');
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP'; // 日本語設定
+      utterance.pitch = 0.8; // ピッチを低めに（ゆっくりボイス風）
+      utterance.rate = 0.7; // 速度をゆっくりめに
+      utterance.volume = 1.0; // 音量
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>
